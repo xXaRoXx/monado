@@ -28,6 +28,10 @@
 
 #include <assert.h>
 
+#ifdef XRT_BUILD_DRIVER_SOLARXR
+#include "solarxr/solarxr_interface.h"
+#endif
+
 #ifndef XRT_BUILD_DRIVER_WMR
 #error "Must only be built with XRT_BUILD_DRIVER_WMR set"
 #endif
@@ -322,6 +326,16 @@ wmr_open_system_impl(struct xrt_builder *xb,
 	if (right_xdev == NULL) {
 		right_xdev = ht_right;
 	}
+
+#ifdef XRT_BUILD_DRIVER_SOLARXR
+	const uint32_t count = solarxr_device_create_xdevs(head->tracking_origin, &xsysd->xdevs[xsysd->xdev_count],
+	                                                   ARRAY_SIZE(xsysd->xdevs) - xsysd->xdev_count);
+	if (count != 0) {
+		xsysd->static_roles.body = xsysd->xdevs[xsysd->xdev_count];
+		solarxr_device_set_feeder_devices(xsysd->static_roles.body, xsysd->xdevs, xsysd->xdev_count);
+	}
+	xsysd->xdev_count += count;
+#endif
 
 
 	// Assign to role(s).

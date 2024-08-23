@@ -28,6 +28,10 @@
 #include "ht_ctrl_emu/ht_ctrl_emu_interface.h"
 #endif
 
+#ifdef XRT_BUILD_DRIVER_SOLARXR
+#include "solarxr/solarxr_interface.h"
+#endif
+
 #include "rift_s/rift_s_interface.h"
 #include "rift_s/rift_s.h"
 
@@ -206,6 +210,17 @@ rift_s_open_system_impl(struct xrt_builder *xb,
 			right_xdev = two_hands[1];
 		}
 	}
+#endif
+
+#ifdef XRT_BUILD_DRIVER_SOLARXR
+	const uint32_t count =
+	    solarxr_device_create_xdevs((hmd_xdev != NULL) ? hmd_xdev->tracking_origin : NULL,
+	                                &xsysd->xdevs[xsysd->xdev_count], ARRAY_SIZE(xsysd->xdevs) - xsysd->xdev_count);
+	if (count != 0) {
+		xsysd->static_roles.body = xsysd->xdevs[xsysd->xdev_count];
+		solarxr_device_set_feeder_devices(xsysd->static_roles.body, xsysd->xdevs, xsysd->xdev_count);
+	}
+	xsysd->xdev_count += count;
 #endif
 
 	// Drop system reference now. It'll be cleaned up when the
