@@ -35,7 +35,9 @@ struct feeder_device
 };
 
 bool
-feeder_add_device(struct feeder *const feeder, struct xrt_device *const xdev)
+feeder_add_device(struct feeder *const feeder,
+                  struct xrt_device *const xdev,
+                  struct xrt_device *const TEMPsolarxr_device)
 {
 	if (xdev == NULL || !xdev->supported.orientation_tracking) {
 		return false;
@@ -135,6 +137,9 @@ feeder_add_device(struct feeder *const feeder, struct xrt_device *const xdev)
 	solarxr_ipc_socket_send_raw(&feeder->socket, packet, packet_len);
 	U_LOG_IFL_D(feeder->socket.log_level, "    \"%s\" [id=%" PRIu32 " serial=\"%s\" role=TrackerRole::%s]",
 	            xdev->str, device->id, xdev->serial, role_name);
+
+	assert(xdev->TEMPsolarxr_feeder == NULL);
+	xdev->TEMPsolarxr_feeder = TEMPsolarxr_device;
 	result = true;
 
 unlock:
@@ -142,7 +147,7 @@ unlock:
 	return result;
 }
 
-static void
+static struct xrt_device *
 feeder_device_unlink(struct feeder_device *const device,
                      struct xrt_device *const xdev,
                      const enum u_logging_level log_level)
@@ -151,16 +156,23 @@ feeder_device_unlink(struct feeder_device *const device,
 		device->destroyed = true;
 		U_LOG_IFL_D(log_level, "device \"%.*s\" removed", (unsigned)ARRAY_SIZE(xdev->str), xdev->str);
 	}
+	struct xrt_device *const old_manager = xdev->TEMPsolarxr_feeder;
+	xdev->TEMPsolarxr_feeder = NULL;
+	return old_manager;
 }
 
 void
-feeder_remove_device(struct feeder *const feeder, struct xrt_device *const xdev)
+feeder_remove_device(struct feeder *const feeder,
+                     struct xrt_device *const xdev,
+                     struct xrt_device *const TEMPsolarxr_device)
 {
 	os_mutex_lock(&feeder->mutex);
 
 	struct feeder_device *device = NULL;
 	u_hashmap_int_find(feeder->devices, (uint64_t)(uintptr_t)xdev, (void **)&device);
-	feeder_device_unlink(device, xdev, feeder->socket.log_level);
+	struct xrt_device *const old_manager = feeder_device_unlink(device, xdev, feeder->socket.log_level);
+	assert(old_manager == TEMPsolarxr_device);
+	(void)old_manager;
 
 	os_mutex_unlock(&feeder->mutex);
 }

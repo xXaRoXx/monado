@@ -16,6 +16,11 @@
 #include "xrt/xrt_plane_detector.h"
 #include "xrt/xrt_visibility_mask.h"
 #include "xrt/xrt_limits.h"
+#include "xrt/xrt_config_drivers.h" // XRT_BUILD_DRIVER_SOLARXR
+
+#ifdef XRT_BUILD_DRIVER_SOLARXR
+#include "../drivers/solarxr/solarxr_interface.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -342,6 +347,11 @@ struct xrt_device
 	//! What features/functions/things does this device supports?
 	struct xrt_device_supported supported;
 
+#ifdef XRT_BUILD_DRIVER_SOLARXR
+	// TODO: generic hotplug API
+	//! SolarXR bridge observing this device.
+	struct xrt_device *TEMPsolarxr_feeder;
+#endif
 
 	/*
 	 *
@@ -1151,6 +1161,12 @@ xrt_device_destroy(struct xrt_device **xdev_ptr)
 	if (xdev == NULL) {
 		return;
 	}
+
+#ifdef XRT_BUILD_DRIVER_SOLARXR
+	if (xdev->TEMPsolarxr_feeder != NULL) {
+		solarxr_device_remove_feeder_device(xdev->TEMPsolarxr_feeder, xdev);
+	}
+#endif
 
 	xdev->destroy(xdev);
 	*xdev_ptr = NULL;

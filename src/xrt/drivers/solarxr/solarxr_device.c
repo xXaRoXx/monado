@@ -1300,7 +1300,11 @@ solarxr_device_add_feeder_device(struct xrt_device *const device, struct xrt_dev
 	if (solarxr == NULL || solarxr_device(xdev) != NULL || solarxr_generic_tracker(xdev) != NULL) {
 		return false;
 	}
-	return feeder_add_device(&solarxr->feeder, xdev);
+
+	if (xdev->TEMPsolarxr_feeder != NULL) {
+		solarxr_device_remove_feeder_device(xdev->TEMPsolarxr_feeder, xdev);
+	}
+	return feeder_add_device(&solarxr->feeder, xdev, device);
 }
 
 void
@@ -1308,7 +1312,7 @@ solarxr_device_remove_feeder_device(struct xrt_device *const device, struct xrt_
 {
 	struct solarxr_device *const solarxr = solarxr_device(device);
 	if (solarxr != NULL) {
-		feeder_remove_device(&solarxr->feeder, xdev);
+		feeder_remove_device(&solarxr->feeder, xdev, device);
 	}
 }
 

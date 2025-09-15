@@ -8,6 +8,7 @@ add_library(xrt-interfaces INTERFACE)
 target_include_directories(
 	xrt-interfaces INTERFACE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
 	)
+target_link_libraries(xrt-interfaces INTERFACE drv_solarxr)
 
 # Make sure the xrt-interfaces target depends on the generated header
 add_dependencies(xrt-interfaces generate_xrt_macro_lists)

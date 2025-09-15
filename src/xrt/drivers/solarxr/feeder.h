@@ -38,13 +38,14 @@ feeder_fini(struct feeder *feeder);
  *
  * @param feeder self
  * @param xdev device to register
+ * @param TEMPsolarxr_device device managing the feeder
  *
  * @return true on success.
  *
  * @public @memberof feeder
  */
 bool
-feeder_add_device(struct feeder *feeder, struct xrt_device *xdev); // thread safe
+feeder_add_device(struct feeder *feeder, struct xrt_device *xdev, struct xrt_device *TEMPsolarxr_device); // thread safe
 
 /*!
  * Unregister a previously added device
@@ -53,11 +54,14 @@ feeder_add_device(struct feeder *feeder, struct xrt_device *xdev); // thread saf
  *
  * @param feeder self
  * @param xdev device to unregister
+ * @param TEMPsolarxr_device device managing the feeder
  *
  * @public @memberof feeder
  */
 void
-feeder_remove_device(struct feeder *feeder, struct xrt_device *xdev); // thread safe
+feeder_remove_device(struct feeder *feeder,
+                     struct xrt_device *xdev,
+                     struct xrt_device *TEMPsolarxr_device); // thread safe
 
 /*!
  * Unregister all observed devices
