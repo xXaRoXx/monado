@@ -328,7 +328,7 @@ wmr_open_system_impl(struct xrt_builder *xb,
 	}
 
 #ifdef XRT_BUILD_DRIVER_SOLARXR
-	const uint32_t count = solarxr_device_create_xdevs(head->tracking_origin, &xsysd->xdevs[xsysd->xdev_count],
+	const uint32_t count = solarxr_device_create_xdevs(head_xdev->tracking_origin, &xsysd->xdevs[xsysd->xdev_count],
 	                                                   ARRAY_SIZE(xsysd->xdevs) - xsysd->xdev_count);
 	if (count != 0) {
 		xsysd->static_roles.body = xsysd->xdevs[xsysd->xdev_count];
