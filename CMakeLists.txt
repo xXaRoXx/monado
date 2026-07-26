@@ -106,18 +106,20 @@ find_package(Vulkan MODULE)
 find_package(HIDAPI MODULE)
 find_package(bluetooth MODULE)
 find_package(OpenHMD MODULE)
-find_package(
-	OpenCV
-	COMPONENTS
-		core
-		calib3d
-		highgui
-		imgproc
-		imgcodecs
-		features2d
-		video
-		CONFIG
-	)
+
+
+find_package(OpenCV 5 REQUIRED COMPONENTS
+    core
+    calib
+    features
+    highgui
+    imgproc
+    imgcodecs
+    video
+    CONFIG
+)
+
+
 find_package(Libusb1 MODULE)
 find_package(JPEG MODULE)
 find_package(realsense2 CONFIG)

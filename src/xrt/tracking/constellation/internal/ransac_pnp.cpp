@@ -16,11 +16,9 @@
 #include "ransac_pnp.h"
 #include "util/u_logging.h"
 
-#include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#if CV_MAJOR_VERSION >= 4
-#include <opencv2/calib3d/calib3d_c.h>
-#endif
+#include <opencv2/calib3d.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
 #include <iostream>
 
 using namespace std;
